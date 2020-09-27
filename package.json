@@ -1,0 +1,25 @@
+{
+  "name": "vcspeaker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "buffer-to-stream": "^1.0.0",
+    "eris": "^0.13.3",
+    "voice-text": "^0.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaoafa/VCSpeaker.git"
+  },
+  "author": "Tomachi (book000)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jaoafa/VCSpeaker/issues"
+  },
+  "homepage": "https://github.com/jaoafa/VCSpeaker#readme"
+}
