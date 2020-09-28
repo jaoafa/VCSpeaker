@@ -14,6 +14,7 @@ const {
 const voiceText = new VoiceText(voicetextAPIKey);
 const bot = new eris(token);
 
+let textChannel = null;
 let connection = null;
 let textBuffer = [];
 
@@ -65,6 +66,8 @@ bot.on("messageCreate", (msg) => {
     if (msg.channel.guild.id != "597378876556967936") return; // jMS Gamers Club
 
     if (msg.channel.id != "623153228267388958") return; // #vc
+
+    textChannel = msg.channel;
 
     console.log(`${msg.author.username}: ${msg.content} / ${textBuffer.length}`);
 
@@ -160,6 +163,15 @@ function replaceSpeakMessage(content) {
 function getSpeakStream(obj) {
     if (obj.voice == undefined) obj.voice = "hikari";
     if (!connection) return;
+    try {
+        const stream = voiceText.stream(obj.msg.slice(0, 200), {
+            speaker: obj.voice
+        });
+        connection.play(stream);
+    } catch (err) {
+        console.log(err);
+    }
+    /*
     var url = voiceText.fetchBuffer(obj.msg, {
         speaker: obj.voice
     }).then(buffer => {
@@ -171,6 +183,7 @@ function getSpeakStream(obj) {
             connection.play(stream);
         }
     });
+    */
 }
 
 function joinVC(channelID) {
