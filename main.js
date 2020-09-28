@@ -14,7 +14,6 @@ const {
 const voiceText = new VoiceText(voicetextAPIKey);
 const bot = new eris(token);
 
-let nowChannel = null;
 let connection = null;
 let textBuffer = [];
 
@@ -27,6 +26,11 @@ bot.on("voiceChannelJoin", (member, channel) => {
         return;
     }
     console.log("voiceChannelJoin:" + member.username + " / " + channel.name);
+
+    if (connection == null && !member.bot) {
+        joinVC(channel.id);
+    }
+
     addSpeakMsg(`${member.username} joined to ${channel.name}`);
 });
 bot.on("voiceChannelSwitch", (member, oldChannel, newChannel) => {
@@ -34,6 +38,12 @@ bot.on("voiceChannelSwitch", (member, oldChannel, newChannel) => {
         return;
     }
     console.log("voiceChannelSwitch:" + member.username + " / " + oldChannel.name + " -> " + newChannel.name);
+
+    if (connection != null && oldChannel.id == connection.channelID && oldChannel.voiceMembers.filter(member => !member.bot).length == 0) {
+        bot.leaveVoiceChannel(connection.channelID);
+        connection = null;
+    }
+
     addSpeakMsg(`${member.username} joined to ${newChannel.name} from ${oldChannel.name}`);
 });
 bot.on("voiceChannelLeave", (member, channel) => {
@@ -41,7 +51,13 @@ bot.on("voiceChannelLeave", (member, channel) => {
         return;
     }
     console.log("voiceChannelLeave:" + member.username + " / " + channel.name);
-    addSpeakMsg(`${member.username} left ${channel.name}`);
+
+    if (connection != null && channel.id == connection.channelID && channel.voiceMembers.filter(member => !member.bot).length == 0) {
+        bot.leaveVoiceChannel(connection.channelID);
+        connection = null;
+    }
+
+    addSpeakMsg(`${member.username} left from ${channel.name}`);
 });
 bot.on("messageCreate", (msg) => {
     if (msg.author.bot) return;
@@ -49,6 +65,8 @@ bot.on("messageCreate", (msg) => {
     if (msg.channel.guild.id != "597378876556967936") return; // jMS Gamers Club
 
     if (msg.channel.id != "623153228267388958") return; // #vc
+
+    console.log(`${msg.author.username}: ${msg.content} / ${textBuffer.length}`);
 
     if (msg.content == prefix + "summon") {
         if (msg.member.voiceState.channelID != null) {
@@ -60,7 +78,7 @@ bot.on("messageCreate", (msg) => {
     }
     if (msg.content == prefix + "disconnect") {
         if (connection) {
-            bot.leaveVoiceChannel(connection.id)
+            bot.leaveVoiceChannel(connection.channelID)
             return;
         }
         msg.addReaction("❌");
@@ -141,6 +159,7 @@ function replaceSpeakMessage(content) {
 // speaker:とか消す
 function getSpeakStream(obj) {
     if (obj.voice == undefined) obj.voice = "hikari";
+    if (!connection) return;
     var url = voiceText.fetchBuffer(obj.msg, {
         speaker: obj.voice
     }).then(buffer => {
@@ -161,7 +180,7 @@ function joinVC(channelID) {
             connection = con;
             connection.on("end", () => {
                 if (textBuffer.length) {
-                    connection.play(getSpeakStream(textBuffer.shift()))
+                    getSpeakStream(textBuffer.shift());
                 }
             })
         });
