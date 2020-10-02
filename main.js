@@ -187,11 +187,14 @@ function getSpeakStream(obj) {
     try {
         let ret = {};
         ret.speaker = obj.voice;
-        if (ret.speed != undefined) ret.speed = speed;
+        if (ret.speed != undefined) ret.speed = obj.speed;
 
         const stream = voiceText.stream(obj.msg.slice(0, 200), ret);
         connection.play(stream);
     } catch (err) {
+        if (err.message.includes("Not ready yet")) {
+            connection = null;
+        }
         console.log(err);
     }
     /*
