@@ -229,6 +229,7 @@ function joinVC(channelID) {
         .then((con) => {
             connection = con;
             connection.on("end", () => {
+                console.log("on(end)");
                 connection.removeAllListeners();
                 if (textBuffer.length) {
                     getSpeakStream(textBuffer.shift());
