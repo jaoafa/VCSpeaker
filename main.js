@@ -113,6 +113,7 @@ bot.on("messageCreate", (msg) => {
 
 function addSpeakMsg(content) {
     const speaker = getSpeaker(content);
+    const speed = getSpeed(content);
     content = replaceSpeakMessage(content);
     if (content.length == 0) {
         return false;
@@ -125,13 +126,13 @@ function addSpeakMsg(content) {
         textBuffer.push({
             voice: speaker,
             msg: content,
-            speed: undefined
+            speed: speed
         });
     } else {
         var error = getSpeakStream({
             voice: speaker,
             msg: content,
-            speed: undefined
+            speed: speed
         });
         if (error) {
             return false;
@@ -148,6 +149,16 @@ function getSpeaker(msg) {
             continue;
         }
         return arg.substring("speaker:".length);
+    }
+}
+
+function getSpeed(msg) {
+    const args = msg.split(" ");
+    for (arg of args) {
+        if (!arg.startsWith("speed:")) {
+            continue;
+        }
+        return arg.substring("speed:".length);
     }
 }
 
@@ -187,7 +198,7 @@ function getSpeakStream(obj) {
     try {
         let ret = {};
         ret.speaker = obj.voice;
-        if (ret.speed != undefined) ret.speed = obj.speed;
+        if (obj.speed != undefined) ret.speed = obj.speed;
 
         const stream = voiceText.stream(obj.msg.slice(0, 200), ret);
         connection.play(stream);
