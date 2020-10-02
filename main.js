@@ -121,13 +121,18 @@ function addSpeakMsg(content) {
         return;
     }
     console.log(`addSpeakMsg: ${speaker} ${content}`);
-    let ret = {};
-    ret.voice = speaker;
-    ret.msg = content;
     if (connection.playing) {
-        textBuffer.push(ret);
+        textBuffer.push({
+            voice: speaker,
+            msg: content,
+            speed: undefined
+        });
     } else {
-        var error = getSpeakStream(ret);
+        var error = getSpeakStream({
+            voice: speaker,
+            msg: content,
+            speed: undefined
+        });
         if (error) {
             return false;
         }
@@ -175,11 +180,16 @@ function replaceSpeakMessage(content) {
 // speaker:とか消す
 function getSpeakStream(obj) {
     if (obj.voice == undefined) obj.voice = "hikari";
+    if (obj.speed == undefined && (obj.msg.contains("http:") || obj.msg.contains("https:"))) {
+        obj.speed = 200;
+    }
     if (!connection) return;
     try {
-        const stream = voiceText.stream(obj.msg.slice(0, 200), {
-            speaker: obj.voice
-        });
+        let ret = {};
+        ret.speaker = obj.voice;
+        if (ret.speed != undefined) ret.speed = speed;
+
+        const stream = voiceText.stream(obj.msg.slice(0, 200), ret);
         connection.play(stream);
     } catch (err) {
         console.log(err);
