@@ -180,7 +180,7 @@ function replaceSpeakMessage(content) {
 // speaker:とか消す
 function getSpeakStream(obj) {
     if (obj.voice == undefined) obj.voice = "hikari";
-    if (obj.speed == undefined && (obj.msg.contains("http:") || obj.msg.contains("https:"))) {
+    if (obj.speed == undefined && (obj.msg.includes("http:") || obj.msg.includes("https:"))) {
         obj.speed = 200;
     }
     if (!connection) return;
