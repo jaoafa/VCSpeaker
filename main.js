@@ -149,10 +149,10 @@ function getSpeaker(msg) {
 function replaceMentions(msg) {
     let content = msg.content;
     for (mention of msg.mentions) {
-        content = content.replace(`<@${mention.id}>`, `@${mention.username}#${mention.discriminator}`);
+        content = content.replace(`<@!?${mention.id}>`, `@${mention.username}#${mention.discriminator}`);
     }
     for (mention of msg.roleMentions) {
-        content = content.replace(`<@${mention.id}>`, `@${mention.username}#${mention.discriminator}`);
+        content = content.replace(`<@&${mention.id}>`, `@${mention.username}#${mention.discriminator}`);
     }
     return content;
 }
