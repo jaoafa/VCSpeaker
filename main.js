@@ -10,6 +10,11 @@ const {
 const {
     exit
 } = require("process");
+const tempfile = require("tempfile");
+const {
+    execSync
+} = require("child_process");
+const fs = require("fs");
 
 const voiceText = new VoiceText(voicetextAPIKey);
 const bot = new eris(token);
@@ -101,14 +106,13 @@ bot.on("messageCreate", (msg) => {
             return;
         }
     }
-    if (addSpeakMsg(msg.content) == false) {
+    if (addSpeakMsg(replaceMentions(msg)) == false) {
         msg.addReaction("❌");
     }
 });
 
-// TODO: なんかいろいろ https://github.com/pekko1215/DiscordTalker/blob/master/server.js
-
 function addSpeakMsg(content) {
+    const speaker = getSpeaker(content);
     content = replaceSpeakMessage(content);
     if (content.length == 0) {
         return false;
@@ -116,16 +120,14 @@ function addSpeakMsg(content) {
     if (!connection) {
         return;
     }
+    console.log(`addSpeakMsg: ${speaker} ${content}`);
+    let ret = {};
+    ret.voice = speaker;
+    ret.msg = content;
     if (connection.playing) {
-        textBuffer.push({
-            voice: getSpeaker(content),
-            msg: content
-        });
+        textBuffer.push(ret);
     } else {
-        var error = getSpeakStream({
-            voice: getSpeaker(content),
-            msg: content
-        })
+        var error = getSpeakStream(ret);
         if (error) {
             return false;
         }
@@ -144,17 +146,27 @@ function getSpeaker(msg) {
     }
 }
 
+function replaceMentions(msg) {
+    let content = msg.content;
+    for (mention of msg.mentions) {
+        content = content.replace(`<@${mention.id}>`, `@${mention.username}#${mention.discriminator}`);
+    }
+    for (mention of msg.roleMentions) {
+        content = content.replace(`<@${mention.id}>`, `@${mention.username}#${mention.discriminator}`);
+    }
+    return content;
+}
+
 function replaceSpeakMessage(content) {
-    var ranges = [
-        "\ud83c[\udf00-\udfff]",
-        "\ud83d[\udc00-\ude4f]",
-        "\ud83d[\ude80-\udeff]",
-        "\ud7c9[\ude00-\udeff]",
-        "[\u2600-\u27BF]"
-    ];
-    var ex = new RegExp(ranges.join("|"), "g");
-    content = content.replace(ex, ""); //ここで削除
     content = content.replace(new RegExp("speaker:[A-Za-z0-9]+", "g"), "");
+    content = content.replace(/<a?:(.+?):([0-9]+)>/g, "$1");
+    // text = EmojiParser.parseToAliases(text);
+
+    // EmojiParser-jar-with-dependencies.jar
+    const tempPath = tempfile();
+    fs.writeFileSync(tempPath, content);
+    content = execSync(`java -jar ${__dirname}/EmojiParser-jar-with-dependencies.jar ${tempPath}`).toString();
+    fs.unlinkSync(tempPath);
 
     return content;
 }

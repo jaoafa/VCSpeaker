@@ -6,6 +6,7 @@
   "dependencies": {
     "buffer-to-stream": "^1.0.0",
     "eris": "^0.13.3",
+    "tempfile": "^3.0.0",
     "voice-text": "^0.1.2"
   },
   "devDependencies": {},
