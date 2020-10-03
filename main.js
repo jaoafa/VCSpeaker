@@ -113,7 +113,7 @@ bot.on("messageCreate", (msg) => {
 
 function addSpeakMsg(msg, content) {
     const speaker = getSpeaker(content);
-    const speed = getSpeed(content);
+    let speed = getSpeed(content);
     if (content.length >= 200 && speed == undefined) {
         speed = 400;
     }
@@ -186,6 +186,23 @@ function getPitch(msg) {
             continue;
         }
         return arg.substring("pitch:".length);
+    }
+    return undefined;
+}
+
+function getEmotion(msg) {
+    const args = msg.split(" ");
+    for (arg of args) {
+        if (!arg.startsWith("emotion:")) {
+            continue;
+        }
+        if (arg.substring("emotion:".length).startsWith("happy")) {
+            return "happiness";
+        } else if (arg.substring("emotion:".length).startsWith("anger")) {
+            return "anger";
+        } else if (arg.substring("emotion:".length).startsWith("sadness")) {
+            return "sadness";
+        }
     }
     return undefined;
 }
