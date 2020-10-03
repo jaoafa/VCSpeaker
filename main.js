@@ -130,6 +130,7 @@ function addSpeakMsg(content) {
         for (let i = 0; i < content.length / 200; i++) {
             const _content = content.substr(i * 200, 200);
             textBuffer.push({
+                msg: msg,
                 voice: speaker,
                 msg: _content,
                 speed: speed,
@@ -141,6 +142,7 @@ function addSpeakMsg(content) {
         for (let i = 0; i < content.length / 200; i++) {
             const _content = content.substr(i * 200, 200);
             const _error = getSpeakStream({
+                msg: msg,
                 voice: speaker,
                 msg: _content,
                 speed: speed,
@@ -203,6 +205,7 @@ function replaceMentions(msg) {
 function replaceSpeakMessage(content) {
     content = content.replace(new RegExp("speaker:[A-Za-z0-9]+", "g"), "");
     content = content.replace(new RegExp("speed:[A-Za-z0-9]+", "g"), "");
+    content = content.replace(new RegExp("pitch:[A-Za-z0-9]+", "g"), "");
     content = content.replace(/<a?:(.+?):([0-9]+)>/g, "$1");
     // text = EmojiParser.parseToAliases(text);
 
@@ -228,6 +231,7 @@ function getSpeakStream(obj) {
         if (obj.speed != undefined) ret.speed = obj.speed;
 
         const stream = voiceText.stream(obj.msg.slice(0, 200), ret);
+        obj.msg.addReaction("🗣️");
         connection.play(stream);
     } catch (err) {
         if (err.message.includes("Not ready yet")) {
