@@ -106,12 +106,12 @@ bot.on("messageCreate", (msg) => {
             return;
         }
     }
-    if (addSpeakMsg(replaceMentions(msg)) == false) {
+    if (addSpeakMsg(msg, replaceMentions(msg)) == false) {
         msg.addReaction("❌");
     }
 });
 
-function addSpeakMsg(content) {
+function addSpeakMsg(msg, content) {
     const speaker = getSpeaker(content);
     const speed = getSpeed(content);
     if (content.length >= 200 && speed == undefined) {
