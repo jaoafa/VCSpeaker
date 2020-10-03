@@ -126,7 +126,7 @@ function addSpeakMsg(msg, content) {
     if (!connection) {
         return;
     }
-    console.log(`addSpeakMsg: ${speaker} ${content}`);
+    console.log(`addSpeakMsg:  ${content} | speaker: ${speaker} / speed: ${speed} / pitch: ${pitch} / emotion: ${emotion}`);
     if (connection.playing) {
         for (let i = 0; i < content.length / 200; i++) {
             const _content = content.substr(i * 200, 200);
