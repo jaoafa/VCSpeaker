@@ -262,7 +262,7 @@ function getSpeakStream(obj) {
         }
         console.log(err);
         if (obj.message != null) obj.message.addReaction("❌");
-        if (obj.message != null) obj.message.channel.createMessage(`<@${obj.message.author.id}> ${err.name} ${err.message}`);
+        if (obj.message != null) obj.message.channel.createMessage(`<@${obj.message.author.id}> Error: \`\`\`${err.message}\`\`\``);
     }
     /*
     var url = voiceText.fetchBuffer(obj.msg, {
