@@ -37,7 +37,7 @@ bot.on("voiceChannelJoin", (member, channel) => {
         joinVC(channel.id);
     }
 
-    addSpeakMsg(`${member.username} joined to ${channel.name}`);
+    addSpeakMsg(null, `${member.username} joined to ${channel.name}`);
 });
 bot.on("voiceChannelSwitch", (member, oldChannel, newChannel) => {
     if (channel.guild.id != "597378876556967936") {
@@ -50,7 +50,7 @@ bot.on("voiceChannelSwitch", (member, oldChannel, newChannel) => {
         connection = null;
     }
 
-    addSpeakMsg(`${member.username} joined to ${newChannel.name} from ${oldChannel.name}`);
+    addSpeakMsg(null, `${member.username} joined to ${newChannel.name} from ${oldChannel.name}`);
 });
 bot.on("voiceChannelLeave", (member, channel) => {
     if (channel.guild.id != "597378876556967936") {
@@ -63,7 +63,7 @@ bot.on("voiceChannelLeave", (member, channel) => {
         connection = null;
     }
 
-    addSpeakMsg(`${member.username} left from ${channel.name}`);
+    addSpeakMsg(null, `${member.username} left from ${channel.name}`);
 });
 bot.on("messageCreate", (msg) => {
     if (msg.author.bot) return;
@@ -254,14 +254,15 @@ function getSpeakStream(obj) {
         if (obj.emotion != undefined) ret.emotion = obj.emotion;
 
         const stream = voiceText.stream(obj.msg.slice(0, 200), ret);
-        obj.message.addReaction("🗣️");
+        if (obj.message != null) obj.message.addReaction("🗣️");
         connection.play(stream);
     } catch (err) {
         if (err.message.includes("Not ready yet")) {
             connection = null;
         }
         console.log(err);
-        msg.addReaction("❌");
+        if (obj.message != null) obj.message.addReaction("❌");
+        if (obj.message != null) obj.message.channel.sendMessage(`<@${msg.author.id}> ${err.name} ${err.message}`);
     }
     /*
     var url = voiceText.fetchBuffer(obj.msg, {
