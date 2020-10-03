@@ -128,7 +128,7 @@ function addSpeakMsg(content) {
     console.log(`addSpeakMsg: ${speaker} ${content}`);
     if (connection.playing) {
         for (let i = 0; i < content.length / 200; i++) {
-            const _content = content.substr(i * 200, 3);
+            const _content = content.substr(i * 200, 200);
             textBuffer.push({
                 voice: speaker,
                 msg: _content,
@@ -139,7 +139,7 @@ function addSpeakMsg(content) {
     } else {
         let error = false;
         for (let i = 0; i < content.length / 200; i++) {
-            const _content = content.substr(i * 200, 3);
+            const _content = content.substr(i * 200, 200);
             const _error = getSpeakStream({
                 voice: speaker,
                 msg: _content,
