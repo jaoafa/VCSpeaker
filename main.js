@@ -114,6 +114,7 @@ bot.on("messageCreate", (msg) => {
 function addSpeakMsg(content) {
     const speaker = getSpeaker(content);
     const speed = getSpeed(content);
+    const pitch = getPitch(content);
     content = replaceSpeakMessage(content);
     if (content.length == 0) {
         return false;
@@ -126,13 +127,15 @@ function addSpeakMsg(content) {
         textBuffer.push({
             voice: speaker,
             msg: content,
-            speed: speed
+            speed: speed,
+            pitch: pitch
         });
     } else {
         var error = getSpeakStream({
             voice: speaker,
             msg: content,
-            speed: speed
+            speed: speed,
+            pitch: pitch
         });
         if (error) {
             return false;
@@ -160,6 +163,18 @@ function getSpeed(msg) {
         }
         return arg.substring("speed:".length);
     }
+    return undefined;
+}
+
+function getPitch(msg) {
+    const args = msg.split(" ");
+    for (arg of args) {
+        if (!arg.startsWith("pitch:")) {
+            continue;
+        }
+        return arg.substring("pitch:".length);
+    }
+    return undefined;
 }
 
 function replaceMentions(msg) {
@@ -230,8 +245,8 @@ function joinVC(channelID) {
         .then((con) => {
             connection = con;
             connection.on("end", () => {
-                console.log("on(end)");
-                connection.removeAllListeners();
+                console.log(`on(end) ${textBuffer.length}`);
+                // connection.removeAllListeners();
                 if (textBuffer.length) {
                     getSpeakStream(textBuffer.shift());
                 }
