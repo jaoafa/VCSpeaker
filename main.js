@@ -226,6 +226,7 @@ function replaceSpeakMessage(content) {
     content = content.replace(new RegExp("speaker:[A-Za-z0-9]+", "g"), "");
     content = content.replace(new RegExp("speed:[A-Za-z0-9]+", "g"), "");
     content = content.replace(new RegExp("pitch:[A-Za-z0-9]+", "g"), "");
+    content = content.replace(new RegExp("emotion:[A-Za-z0-9]+", "g"), "");
     content = content.replace(/<a?:(.+?):([0-9]+)>/g, "$1");
     // text = EmojiParser.parseToAliases(text);
 
