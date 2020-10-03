@@ -261,6 +261,7 @@ function getSpeakStream(obj) {
             connection = null;
         }
         console.log(err);
+        msg.addReaction("❌");
     }
     /*
     var url = voiceText.fetchBuffer(obj.msg, {
