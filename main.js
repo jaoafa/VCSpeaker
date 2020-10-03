@@ -254,14 +254,14 @@ function getSpeakStream(obj) {
         if (obj.emotion != undefined) ret.emotion = obj.emotion;
 
         const stream = voiceText.stream(obj.msg.slice(0, 200), ret);
-        if (obj.message != null) obj.message.addReaction("🗣️");
+        if (obj.message != null) obj.message.addReaction("🗣️").catch(err => console.log(err));
         connection.play(stream);
     } catch (err) {
         if (err.message.includes("Not ready yet")) {
             connection = null;
         }
         console.log(err);
-        if (obj.message != null) obj.message.addReaction("❌");
+        if (obj.message != null) obj.message.addReaction("❌").catch(err => console.log(err));
         if (obj.message != null) obj.message.channel.createMessage(`<@${obj.message.author.id}> Error: \`\`\`${err.message}\`\`\``);
     }
     /*
