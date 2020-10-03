@@ -114,6 +114,9 @@ bot.on("messageCreate", (msg) => {
 function addSpeakMsg(content) {
     const speaker = getSpeaker(content);
     const speed = getSpeed(content);
+    if (content.length >= 200 && speed == undefined) {
+        speed = 400;
+    }
     const pitch = getPitch(content);
     content = replaceSpeakMessage(content);
     if (content.length == 0) {
