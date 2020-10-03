@@ -124,19 +124,27 @@ function addSpeakMsg(content) {
     }
     console.log(`addSpeakMsg: ${speaker} ${content}`);
     if (connection.playing) {
-        textBuffer.push({
-            voice: speaker,
-            msg: content,
-            speed: speed,
-            pitch: pitch
-        });
+        for (let i = 0; i < content.length / 200; i++) {
+            const _content = content.substr(i * 200, 3);
+            textBuffer.push({
+                voice: speaker,
+                msg: _content,
+                speed: speed,
+                pitch: pitch
+            });
+        }
     } else {
-        var error = getSpeakStream({
-            voice: speaker,
-            msg: content,
-            speed: speed,
-            pitch: pitch
-        });
+        let error = false;
+        for (let i = 0; i < content.length / 200; i++) {
+            const _content = content.substr(i * 200, 3);
+            const _error = getSpeakStream({
+                voice: speaker,
+                msg: _content,
+                speed: speed,
+                pitch: pitch
+            });
+            if (!error && _error) error = true;
+        }
         if (error) {
             return false;
         }
