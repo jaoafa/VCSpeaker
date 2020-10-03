@@ -118,6 +118,7 @@ function addSpeakMsg(msg, content) {
         speed = 400;
     }
     const pitch = getPitch(content);
+    const emotion = getEmotion(content);
     content = replaceSpeakMessage(content);
     if (content.length == 0) {
         return false;
@@ -134,7 +135,8 @@ function addSpeakMsg(msg, content) {
                 voice: speaker,
                 msg: _content,
                 speed: speed,
-                pitch: pitch
+                pitch: pitch,
+                emotion: emotion
             });
         }
     } else {
@@ -146,7 +148,8 @@ function addSpeakMsg(msg, content) {
                 voice: speaker,
                 msg: _content,
                 speed: speed,
-                pitch: pitch
+                pitch: pitch,
+                emotion: emotion
             });
             if (!error && _error) error = true;
         }
@@ -246,6 +249,8 @@ function getSpeakStream(obj) {
         let ret = {};
         ret.speaker = obj.voice;
         if (obj.speed != undefined) ret.speed = obj.speed;
+        if (obj.pitch != undefined) ret.pitch = obj.pitch;
+        if (obj.emotion != undefined) ret.emotion = obj.emotion;
 
         const stream = voiceText.stream(obj.msg.slice(0, 200), ret);
         obj.message.addReaction("🗣️");
