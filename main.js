@@ -130,7 +130,7 @@ function addSpeakMsg(content) {
         for (let i = 0; i < content.length / 200; i++) {
             const _content = content.substr(i * 200, 200);
             textBuffer.push({
-                msg: msg,
+                message: msg,
                 voice: speaker,
                 msg: _content,
                 speed: speed,
@@ -142,7 +142,7 @@ function addSpeakMsg(content) {
         for (let i = 0; i < content.length / 200; i++) {
             const _content = content.substr(i * 200, 200);
             const _error = getSpeakStream({
-                msg: msg,
+                message: msg,
                 voice: speaker,
                 msg: _content,
                 speed: speed,
@@ -231,7 +231,7 @@ function getSpeakStream(obj) {
         if (obj.speed != undefined) ret.speed = obj.speed;
 
         const stream = voiceText.stream(obj.msg.slice(0, 200), ret);
-        obj.msg.addReaction("🗣️");
+        obj.message.addReaction("🗣️");
         connection.play(stream);
     } catch (err) {
         if (err.message.includes("Not ready yet")) {
