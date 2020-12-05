@@ -41,7 +41,7 @@ bot.on("voiceChannelJoin", (member, channel) => {
     addSpeakMsg(null, `${member.username} joined to ${channel.name}`);
 });
 bot.on("voiceChannelSwitch", (member, oldChannel, newChannel) => {
-    if (channel.guild.id != "597378876556967936") {
+            if (oldChannel.guild.id != "597378876556967936") {
         return;
     }
     console.log("voiceChannelSwitch:" + member.username + " / " + oldChannel.name + " -> " + newChannel.name);
@@ -93,10 +93,44 @@ bot.on("messageCreate", (msg) => {
         msg.addReaction("❌");
         return;
     }
-    if (msg.content == prefix + "refresh") {
+    if (msg.content == prefix + "clear") {
         textBuffer.clear();
         msg.addReaction("⭕");
         return;
+    }
+    if (msg.content == prefix + "restart") {
+        bot.disconnect();
+        process.exit(0);
+    }
+    if (msg.content.startsWith(prefix + "alias ")) {
+        const args = msg.content.split(" ");
+        if (args[1] == "add") {
+            const from = args[2];
+            const to = args[3];
+            addAlias(from, to);
+            msg.channel.createMessage(`<@${msg.author.id}> addAlias: ${from} -> ${to}`);
+            return;
+        } else if (args[1] == "remove") {
+            const from = args[2];
+            removeAlias(from);
+            msg.channel.createMessage(`<@${msg.author.id}> removeAlias: ${from}`);
+            return;
+        } else if (args[1] == "list") {
+            const alias = JSON.parse(fs.readFileSync("./alias.json", "utf8"));
+            const list = [];
+            for (from in alias) {
+                const to = alias[from];
+                list.push(`${from} -> ${to}`);
+            }
+            msg.channel.createMessage(`<@${msg.author.id}>\`\`\`${list.join("\n")}\`\`\``);
+            return;
+        }
+        msg.channel.createMessage(`<@${msg.author.id}> \`${prefix}alias <add|remove|list> [from] [to]\``);
+        return;
+    }
+    if (msg.content == prefix + "restart") {
+        bot.disconnect();
+        process.exit(0);
     }
 
     if (!connection) {
@@ -229,6 +263,7 @@ function replaceSpeakMessage(content) {
     content = content.replace(new RegExp("pitch:[A-Za-z0-9]+", "g"), "");
     content = content.replace(new RegExp("emotion:[A-Za-z0-9]+", "g"), "");
     content = content.replace(/<a?:(.+?):([0-9]+)>/g, "$1");
+    content = replaceAlias(content);
     // text = EmojiParser.parseToAliases(text);
 
     // EmojiParser-jar-with-dependencies.jar
@@ -238,6 +273,32 @@ function replaceSpeakMessage(content) {
     fs.unlinkSync(tempPath);
 
     return content;
+}
+
+function replaceAlias(content) {
+    const alias = JSON.parse(fs.readFileSync("./alias.json", "utf8"));
+    const keys = Object.keys(alias).sort(function (a, b) {
+        return b.length - a.length;
+    });
+    for (let key of keys) {
+        const value = alias[key];
+        if (content.indexOf(key) >= 0) {
+            content = content.replace(new RegExp(key, "g"), value);
+        }
+    }
+    return content;
+}
+
+function addAlias(from, to) {
+    let alias = JSON.parse(fs.readFileSync("./alias.json", "utf8"));
+    alias[from] = to;
+    fs.writeFileSync("./alias.json", JSON.stringify(alias));
+}
+
+function removeAlias(from) {
+    let alias = JSON.parse(fs.readFileSync("./alias.json", "utf8"));
+    alias[from] = undefined;
+    fs.writeFileSync("./alias.json", JSON.stringify(alias));
 }
 
 // speaker:とか消す
