@@ -41,7 +41,7 @@ bot.on("voiceChannelJoin", (member, channel) => {
     addSpeakMsg(null, `${member.username} joined to ${channel.name}`);
 });
 bot.on("voiceChannelSwitch", (member, oldChannel, newChannel) => {
-            if (oldChannel.guild.id != "597378876556967936") {
+    if (oldChannel.guild.id != "597378876556967936") {
         return;
     }
     console.log("voiceChannelSwitch:" + member.username + " / " + oldChannel.name + " -> " + newChannel.name);
@@ -349,7 +349,7 @@ function joinVC(channelID) {
         .joinVoiceChannel(channelID)
         .then((con) => {
             connection = con;
-            connection.on("end", () => {
+            connection.on("end", async () => {
                 console.log(`on(end) ${textBuffer.length}`);
                 // connection.removeAllListeners();
                 if (speakingMessage != null) {
