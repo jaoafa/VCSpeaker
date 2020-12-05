@@ -22,6 +22,7 @@ const bot = new eris(token);
 let textChannel = null;
 let connection = null;
 let textBuffer = [];
+let speakingMessage = null;
 
 bot.on("ready", () => {
     console.log("Ready! " + bot.user.username);
@@ -254,7 +255,10 @@ function getSpeakStream(obj) {
         if (obj.emotion != undefined) ret.emotion = obj.emotion;
 
         const stream = voiceText.stream(obj.msg.slice(0, 200), ret);
-        if (obj.message != null) obj.message.addReaction("🗣️").catch(err => console.log(err));
+        if (obj.message != null) {
+            obj.message.addReaction("🗣️").catch(err => console.log(err));
+            speakingMessage = obj.message;
+        }
         connection.play(stream);
     } catch (err) {
         if (err.message.includes("Not ready yet")) {
@@ -287,6 +291,17 @@ function joinVC(channelID) {
             connection.on("end", () => {
                 console.log(`on(end) ${textBuffer.length}`);
                 // connection.removeAllListeners();
+                if (speakingMessage != null) {
+                    const userId = "357565259151572992";
+                    const userReactions = speakingMessage.reactions.cache.filter(reaction => reaction.users.cache.has(userId));
+                    try {
+                        for (const reaction of userReactions.values()) {
+                            await reaction.users.remove(userId);
+                        }
+                    } catch (error) {
+                        console.error('Failed to remove reactions: ', error);
+                    }
+                }
                 if (textBuffer.length) {
                     getSpeakStream(textBuffer.shift());
                 }
