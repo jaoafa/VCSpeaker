@@ -353,15 +353,7 @@ function joinVC(channelID) {
                 console.log(`on(end) ${textBuffer.length}`);
                 // connection.removeAllListeners();
                 if (speakingMessage != null) {
-                    const userId = "357565259151572992";
-                    const userReactions = speakingMessage.reactions.cache.filter(reaction => reaction.users.cache.has(userId));
-                    try {
-                        for (const reaction of userReactions.values()) {
-                            await reaction.users.remove(userId);
-                        }
-                    } catch (error) {
-                        console.error('Failed to remove reactions: ', error);
-                    }
+                    await speakingMessage.removeReaction("🗣️");
                 }
                 if (textBuffer.length) {
                     getSpeakStream(textBuffer.shift());
