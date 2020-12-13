@@ -324,10 +324,31 @@ function getSpeakStream(obj) {
     } catch (err) {
         if (err.message.includes("Not ready yet")) {
             connection = null;
+        }else if (err.message.includes("Already encoding")) {
+            try {
+                // retry
+                let ret = {};
+                ret.speaker = obj.voice;
+                if (obj.speed != undefined) ret.speed = obj.speed;
+                if (obj.pitch != undefined) ret.pitch = obj.pitch;
+                if (obj.emotion != undefined) ret.emotion = obj.emotion;
+
+                const stream = voiceText.stream(obj.msg.slice(0, 200), ret);
+                if (obj.message != null) {
+                    obj.message.addReaction("🗣️").catch(err => console.log(err));
+                    speakingMessage = obj.message;
+                }
+                connection.play(stream);
+            } catch (err2) {
+                console.log(err2);
+                if (obj.message != null) obj.message.addReaction("❌").catch(err2 => console.log(err2));
+                if (obj.message != null) obj.message.channel.createMessage(`<@${obj.message.author.id}> Error(2): \`\`\`${err2.message}\`\`\``);
+            }
+        } else {
+            console.log(err);
+            if (obj.message != null) obj.message.addReaction("❌").catch(err => console.log(err));
+            if (obj.message != null) obj.message.channel.createMessage(`<@${obj.message.author.id}> Error: \`\`\`${err.message}\`\`\``);
         }
-        console.log(err);
-        if (obj.message != null) obj.message.addReaction("❌").catch(err => console.log(err));
-        if (obj.message != null) obj.message.channel.createMessage(`<@${obj.message.author.id}> Error: \`\`\`${err.message}\`\`\``);
     }
     /*
     var url = voiceText.fetchBuffer(obj.msg, {
