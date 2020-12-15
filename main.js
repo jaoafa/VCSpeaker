@@ -38,7 +38,7 @@ bot.on("voiceChannelJoin", (member, channel) => {
         joinVC(channel.id);
     }
 
-    addSpeakMsg(null, `${member.username} joined to ${channel.name}`);
+    addSpeakMsg(null, `${member.username} joined to ${channel.name}`, false);
 });
 bot.on("voiceChannelSwitch", (member, oldChannel, newChannel) => {
     if (oldChannel.guild.id != "597378876556967936") {
@@ -51,7 +51,7 @@ bot.on("voiceChannelSwitch", (member, oldChannel, newChannel) => {
         connection = null;
     }
 
-    addSpeakMsg(null, `${member.username} joined to ${newChannel.name} from ${oldChannel.name}`);
+    addSpeakMsg(null, `${member.username} joined to ${newChannel.name} from ${oldChannel.name}`, false);
 });
 bot.on("voiceChannelLeave", (member, channel) => {
     if (channel.guild.id != "597378876556967936") {
@@ -64,7 +64,7 @@ bot.on("voiceChannelLeave", (member, channel) => {
         connection = null;
     }
 
-    addSpeakMsg(null, `${member.username} left from ${channel.name}`);
+    addSpeakMsg(null, `${member.username} left from ${channel.name}`, false);
 });
 bot.on("messageCreate", (msg) => {
     if (msg.author.bot) return;
@@ -141,12 +141,12 @@ bot.on("messageCreate", (msg) => {
             return;
         }
     }
-    if (addSpeakMsg(msg, replaceMentions(msg)) == false) {
+    if (addSpeakMsg(msg, replaceMentions(msg), true) == false) {
         msg.addReaction("❌");
     }
 });
 
-function addSpeakMsg(msg, content) {
+function addSpeakMsg(msg, content, speakEmoji = true) {
     const speaker = getSpeaker(content);
     let speed = getSpeed(content);
     if (content.length >= 200 && speed == undefined) {
@@ -154,7 +154,7 @@ function addSpeakMsg(msg, content) {
     }
     const pitch = getPitch(content);
     const emotion = getEmotion(content);
-    content = replaceSpeakMessage(content);
+    content = replaceSpeakMessage(content, speakEmoji);
     if (content.length == 0) {
         return false;
     }
@@ -257,7 +257,7 @@ function replaceMentions(msg) {
     return content;
 }
 
-function replaceSpeakMessage(content) {
+function replaceSpeakMessage(content, speakEmoji) {
     content = content.replace(new RegExp("speaker:[A-Za-z0-9]+", "g"), "");
     content = content.replace(new RegExp("speed:[A-Za-z0-9]+", "g"), "");
     content = content.replace(new RegExp("pitch:[A-Za-z0-9]+", "g"), "");
@@ -267,10 +267,12 @@ function replaceSpeakMessage(content) {
     // text = EmojiParser.parseToAliases(text);
 
     // EmojiParser-jar-with-dependencies.jar
-    const tempPath = tempfile();
-    fs.writeFileSync(tempPath, content);
-    content = execSync(`java -jar ${__dirname}/EmojiParser-jar-with-dependencies.jar ${tempPath}`).toString();
-    fs.unlinkSync(tempPath);
+    if (speakEmoji) {
+        const tempPath = tempfile();
+        fs.writeFileSync(tempPath, content);
+        content = execSync(`java -jar ${__dirname}/EmojiParser-jar-with-dependencies.jar ${tempPath}`).toString();
+        fs.unlinkSync(tempPath);
+    }
 
     return content;
 }
