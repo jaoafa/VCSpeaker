@@ -271,7 +271,7 @@ function replaceSpeakMessage(content, speakEmoji) {
     fs.writeFileSync(tempPath, content);
     content = execSync(`java -jar ${__dirname}/EmojiParser-jar-with-dependencies.jar ${tempPath}`).toString();
     fs.unlinkSync(tempPath);
-    if (speakEmoji) {
+    if (!speakEmoji) {
         content = content.replace(new RegExp(":([a-zA-Z0-9]+):", "g"), "");
     }
 
