@@ -267,11 +267,12 @@ function replaceSpeakMessage(content, speakEmoji) {
     // text = EmojiParser.parseToAliases(text);
 
     // EmojiParser-jar-with-dependencies.jar
+    const tempPath = tempfile();
+    fs.writeFileSync(tempPath, content);
+    content = execSync(`java -jar ${__dirname}/EmojiParser-jar-with-dependencies.jar ${tempPath}`).toString();
+    fs.unlinkSync(tempPath);
     if (speakEmoji) {
-        const tempPath = tempfile();
-        fs.writeFileSync(tempPath, content);
-        content = execSync(`java -jar ${__dirname}/EmojiParser-jar-with-dependencies.jar ${tempPath}`).toString();
-        fs.unlinkSync(tempPath);
+        content = content.replace(new RegExp(":([a-zA-Z0-9]+):", "g"), "");
     }
 
     return content;
