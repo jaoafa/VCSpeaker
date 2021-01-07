@@ -15,6 +15,7 @@ const {
     execSync
 } = require("child_process");
 const fs = require("fs");
+const url = require("url");
 
 const voiceText = new VoiceText(voicetextAPIKey);
 const bot = new eris(token);
@@ -275,6 +276,13 @@ function replaceSpeakMessage(content, speakEmoji) {
         content = content.replace(new RegExp(":([a-zA-Z0-9]+):", "g"), "");
     }
 
+    // url to title or filename
+
+    content = content.replace(new RegExp("https?://([\\w-]+\.)+[\\w-]+(/[\\w-.?%&=]*)?", "g"), (match) => {
+        return url.parse(match).pathname.slice(url.parse(match).pathname.indexOf("/") + 1) == "" ? url.parse(match).hostname : url.parse(match).pathname.slice(url.parse(match).pathname.indexOf("/") + 1);
+    });
+    content = content.replace("%20", " ");
+
     return content;
 }
 
@@ -327,7 +335,7 @@ function getSpeakStream(obj) {
     } catch (err) {
         if (err.message.includes("Not ready yet")) {
             connection = null;
-        }else if (err.message.includes("Already encoding")) {
+        } else if (err.message.includes("Already encoding")) {
             try {
                 // retry
                 let ret = {};
