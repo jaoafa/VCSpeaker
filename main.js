@@ -159,6 +159,9 @@ function addSpeakMsg(msg, content, speakEmoji = true) {
     if (content.length == 0) {
         return false;
     }
+    if (content == ".") {
+        return false;
+    }
     if (!connection) {
         return;
     }
