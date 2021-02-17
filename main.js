@@ -78,6 +78,10 @@ bot.on("messageCreate", (msg) => {
 
     console.log(`${msg.author.username}: ${msg.content} / ${textBuffer.length}`);
 
+    if (msg.content == ".") {
+        return;
+    }
+
     if (msg.content == prefix + "summon") {
         if (msg.member.voiceState.channelID != null) {
             joinVC(msg.member.voiceState.channelID);
@@ -160,10 +164,10 @@ function addSpeakMsg(msg, content, speakEmoji = true) {
         return false;
     }
     if (content == ".") {
-        return false;
+        return true;
     }
     if (!connection) {
-        return;
+        return false;
     }
     console.log(`addSpeakMsg: ${content} -> speaker: ${speaker} / speed: ${speed} / pitch: ${pitch} / emotion: ${emotion}`);
     if (connection.playing) {
