@@ -39,6 +39,7 @@ bot.on("voiceChannelJoin", (member, channel) => {
         joinVC(channel.id);
     }
 
+    channel.createMessage(`${member.username} joined to ${channel.name}`);
     addSpeakMsg(null, `${member.username} joined to ${channel.name}`, false);
 });
 bot.on("voiceChannelSwitch", (member, oldChannel, newChannel) => {
@@ -52,6 +53,7 @@ bot.on("voiceChannelSwitch", (member, oldChannel, newChannel) => {
         connection = null;
     }
 
+    channel.createMessage(`${member.username} joined to ${newChannel.name} from ${oldChannel.name}`);
     addSpeakMsg(null, `${member.username} joined to ${newChannel.name} from ${oldChannel.name}`, false);
 });
 bot.on("voiceChannelLeave", (member, channel) => {
@@ -65,6 +67,7 @@ bot.on("voiceChannelLeave", (member, channel) => {
         connection = null;
     }
 
+    channel.createMessage(`${member.username} left from ${channel.name}`);
     addSpeakMsg(null, `${member.username} left from ${channel.name}`, false);
 });
 bot.on("messageCreate", (msg) => {
