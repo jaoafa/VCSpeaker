@@ -67,7 +67,7 @@ bot.on("voiceChannelLeave", (member, channel) => {
         connection = null;
     }
 
-    channel.createMessage(`${member.username} left from ${channel.name}`);
+    bot.getChannel("623153228267388958").createMessage(`${member.username} left from ${channel.name}`);
     addSpeakMsg(null, `${member.username} left from ${channel.name}`, false);
 });
 bot.on("messageCreate", (msg) => {
