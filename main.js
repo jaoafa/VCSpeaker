@@ -274,6 +274,7 @@ function replaceSpeakMessage(content, speakEmoji) {
     content = content.replace(new RegExp("pitch:[A-Za-z0-9]+", "g"), "");
     content = content.replace(new RegExp("emotion:[A-Za-z0-9]+", "g"), "");
     content = content.replace(/<a?:(.+?):([0-9]+)>/g, "$1");
+    content = content.replace(/[wｗ]{3,}/g, "www");
     content = replaceAlias(content);
     // text = EmojiParser.parseToAliases(text);
 
