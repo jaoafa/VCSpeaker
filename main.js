@@ -40,7 +40,8 @@ bot.on("voiceChannelJoin", (member, channel) => {
     }
 
     bot.getChannel("623153228267388958").createMessage(`\`${member.username}\` joined to \`${channel.name}\``);
-    addSpeakMsg(null, `${member.username} joined to ${channel.name}`, false);
+    channel_name = channel.name.replace(/[\(（].+[\)）]/g, "");
+    addSpeakMsg(null, `${member.username} joined to ${channel_name}`, false);
 });
 bot.on("voiceChannelSwitch", (member, oldChannel, newChannel) => {
     if (oldChannel.guild.id != "597378876556967936") {
@@ -53,8 +54,10 @@ bot.on("voiceChannelSwitch", (member, oldChannel, newChannel) => {
         connection = null;
     }
 
-    bot.getChannel("623153228267388958").createMessage(`\`${member.username}\` joined to \`${newChannel.name}\` from \`${oldChannel.name}\``);
-    addSpeakMsg(null, `${member.username} joined to ${newChannel.name} from ${oldChannel.name}`, false);
+    bot.getChannel("623153228267388958").createMessage(`\`${member.username}\` moved to \`${newChannel.name}\` from \`${oldChannel.name}\``);
+    old_channel_name = oldChannel.name.replace(/[\(（].+[\)）]/g, "");
+    new_channel_name = newChannel.name.replace(/[\(（].+[\)）]/g, "");
+    addSpeakMsg(null, `${member.username} moved to ${new_channel_name} from ${old_channel_name}`, false);
 });
 bot.on("voiceChannelLeave", (member, channel) => {
     if (channel.guild.id != "597378876556967936") {
@@ -68,7 +71,8 @@ bot.on("voiceChannelLeave", (member, channel) => {
     }
 
     bot.getChannel("623153228267388958").createMessage(`\`${member.username}\` left from \`${channel.name}\``);
-    addSpeakMsg(null, `${member.username} left from ${channel.name}`, false);
+    channel_name = channel.name.replace(/[\(（].+[\)）]/g, "");
+    addSpeakMsg(null, `${member.username} left from ${channel_name}`, false);
 });
 bot.on("messageCreate", (msg) => {
     if (msg.author.bot) return;
