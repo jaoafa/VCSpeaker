@@ -290,7 +290,7 @@ function replaceSpeakMessage(content, speakEmoji) {
     // url to title or filename
 
     content = content.replace(new RegExp("https?://([\\w-]+\.)+[\\w-]+(/[\\w-.?%&=]*)?", "g"), (match) => {
-        return url.parse(match).pathname.slice(url.parse(match).pathname.indexOf("/") + 1) == "" ? url.parse(match).hostname : url.parse(match).pathname.slice(url.parse(match).pathname.indexOf("/") + 1);
+        return url.parse(match).pathname.slice(url.parse(match).pathname.indexOf("/") + 1) == "" ? url.parse(match).hostname : url.parse(match).pathname.slice(url.parse(match).pathname.lastIndexOf("/") + 1);
     });
     content = content.replace("%20", " ");
 
