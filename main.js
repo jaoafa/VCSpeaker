@@ -54,10 +54,10 @@ bot.on("voiceChannelSwitch", (member, oldChannel, newChannel) => {
         connection = null;
     }
 
-    bot.getChannel("623153228267388958").createMessage(`\`${member.username}\` moved to \`${newChannel.name}\` from \`${oldChannel.name}\``);
+    bot.getChannel("623153228267388958").createMessage(`\`${member.username}\` moved to \`${oldChannel.name}\` from \`${newChannel.name}\``);
     old_channel_name = oldChannel.name.replace(/[\(（].+[\)）]/g, "");
     new_channel_name = newChannel.name.replace(/[\(（].+[\)）]/g, "");
-    addSpeakMsg(null, `${member.username} moved to ${new_channel_name} from ${old_channel_name}`, false);
+    addSpeakMsg(null, `${member.username} moved to ${old_channel_name} from ${new_channel_name}`, false);
 });
 bot.on("voiceChannelLeave", (member, channel) => {
     if (channel.guild.id != "597378876556967936") {
